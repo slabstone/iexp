@@ -1,4 +1,4 @@
-#include <stdio.h>   // FILE, fopen, fread, rewind
+#include <stdio.h>   // FILE, fopen, fread, rewind, fclose
 #include <stdlib.h>  // EXIT_FAILURE, EXIT_SUCCESS
 #include <string.h>  // strncmp
 
@@ -22,12 +22,14 @@ int main(int argc, char* argv[]) {
   ie_header_signature header_signature;
   if (fread(&header_signature, sizeof(header_signature), 1, file) != 1) {
     log_error("failed to read file header signature");
+    fclose(file);
     return EXIT_FAILURE;
   }
 
   ie_header_version header_version;
   if (fread(&header_version, sizeof(header_version), 1, file) != 1) {
     log_error("failed to read file header version");
+    fclose(file);
     return EXIT_FAILURE;
   }
 
@@ -45,8 +47,10 @@ int main(int argc, char* argv[]) {
     biff_v1_parse_file(file);
   } else {
     log_error("unknown file format");
+    fclose(file);
     return EXIT_FAILURE;
   }
 
+  fclose(file);
   return EXIT_SUCCESS;
 }
